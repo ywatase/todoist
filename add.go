@@ -3,8 +3,9 @@ package main
 import (
 	"context"
 	"strings"
+	"time"
 
-	"github.com/sachaos/todoist/lib"
+	todoist "github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli"
 )
 
@@ -39,7 +40,12 @@ func Add(c *cli.Context) error {
 	}(c.String("label-names"))
 
 	if date := c.String("date"); date != "" {
-		item.Due = &todoist.Due{Date: date}
+		_, err := time.Parse(date, "2013-04-09")
+		if err != nil {
+			item.Due = &todoist.Due{String: date}
+		} else {
+			item.Due = &todoist.Due{Date: date}
+		}
 	}
 	item.AutoReminder = c.Bool("reminder")
 
